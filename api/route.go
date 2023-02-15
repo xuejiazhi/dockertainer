@@ -40,11 +40,18 @@ func Route() {
 		node.GET("/remove", endpoint.RemoveNode)
 	}
 
-	//
+	//面版
 	dashboard := r.Group("/dashboard")
 	dashboard.Use(MiddleWare)
 	{
 		dashboard.GET("/info", endpoint.GetDashBoardInfo)
+	}
+
+	//镜像操作
+	images := r.Group("/images")
+	images.Use(MiddleWare)
+	{
+		images.GET("/list", endpoint.ImagesJson)
 	}
 
 	r.Run()

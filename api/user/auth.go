@@ -21,7 +21,7 @@ func Auth(c *gin.Context) {
 		//设置缓存
 		mac := util.GetMac()
 		cache.Set(mac, generalRegValue(mac, userName, passWord),
-			common.CacheKeyList["user_reg"].TTL)
+			common.CacheKeyList["user_reg_key"].TTL)
 		//返回
 		c.JSON(http.StatusOK, common.NormalMsg{
 			Code: http.StatusOK,

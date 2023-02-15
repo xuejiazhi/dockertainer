@@ -3,6 +3,7 @@ package endpoint
 import (
 	"dockertainer/api/common"
 	"dockertainer/api/databases"
+	"dockertainer/api/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -17,15 +18,24 @@ func AddNode(c *gin.Context) {
 	nodeUrl := c.PostForm("node_url")
 	nodeIp := c.PostForm("node_ip")
 
-	//todo : 校验IP
+	//判断传参
 	if nodeName == "" || nodeUrl == "" || nodeIp == "" {
 		c.JSON(http.StatusOK, common.NormalMsg{
 			Code: http.StatusNoContent,
-			Msg:  "数据格式不正确",
+			Msg:  common.Tips["data_style_wrong"],
 		})
 		return
 	}
 
+	//校验IP
+	if ok := util.RegexpIp(nodeIp); !ok {
+		c.JSON(http.StatusOK, common.NormalMsg{
+			Code: http.StatusNoContent,
+			Msg:  common.Tips["wrong_ip_style"],
+		})
+		return
+	}
+	
 	//增加节点
 	if err := databases.AddNode(&databases.TNodePoint{
 		NodeName: nodeName,
@@ -34,12 +44,12 @@ func AddNode(c *gin.Context) {
 	}); err == nil {
 		c.JSON(http.StatusOK, common.NormalMsg{
 			Code: http.StatusOK,
-			Msg:  "增加节点成功",
+			Msg:  common.Tips["add_node_succ"],
 		})
 	} else {
 		c.JSON(http.StatusOK, common.NormalMsg{
 			Code: http.StatusNoContent,
-			Msg:  "增加节点失败," + err.Error(),
+			Msg:  common.Tips["add_node_wrong"] + err.Error(),
 		})
 	}
 

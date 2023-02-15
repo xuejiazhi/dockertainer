@@ -6,11 +6,12 @@ import (
 	"github.com/idoubi/goz"
 	"io"
 	"net"
+	"regexp"
 )
 
 func HashSaltMd5(password, salt string) string {
 	h := md5.New()
-	io.WriteString(h, password+salt)
+	_, _ = io.WriteString(h, password+salt)
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
@@ -36,4 +37,18 @@ func HttpGet(url string) string {
 	}
 	body, _ := resp.GetBody()
 	return body.String()
+}
+
+func RegexpIp(ip string) bool {
+	ipReg := `^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4})`
+	r, _ := regexp.Compile(ipReg)
+	match := r.MatchString(ip)
+	if match {
+		return true
+	}
+	return false
+}
+
+func Json2Struct() {
+	
 }
