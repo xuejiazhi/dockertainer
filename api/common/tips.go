@@ -10,5 +10,10 @@ var (
 		"wrong_ip_style":   "错误的IP",
 		"get_data_succ":    "获取数据成功",
 		"get_data_fail":    "获取数据失败",
+		"id_is_null":       "镜像ID为空",
+		"operate_succ":     "操作成功",
+		"operate_fail":     "操作失败",
+		"remove_succ":      "删除成功",
+		"remove_fail":      "删除失败",
 	}
 )

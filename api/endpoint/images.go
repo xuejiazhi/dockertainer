@@ -45,6 +45,31 @@ func ExportTarFile() {
 }
 
 // RemoveImage 删除镜像包,分为一般删除和强制删除
-func RemoveImage() {
+func RemoveImage(c *gin.Context) {
+	//get params
+	nodeName := c.DefaultQuery("node_name", "")
+
+	//校验
+	var nodeInfo databases.TNodePoint
+	if msg, err := judgeNode(nodeName, &nodeInfo); err != nil {
+		c.JSON(http.StatusOK, msg)
+		return
+	}
+
+	//get params
+	imageId := c.DefaultQuery("image_id", "")
+	if imageId == "" {
+		c.JSON(http.StatusOK, common.NormalMsg{
+			Code: http.StatusNoContent,
+			Msg:  common.Tips["id_is_null"],
+		})
+		return
+	}
+
+	//remove url
+	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s", nodeInfo.NodeUrl, imageId)
+	retData := deleteDockerApi(restUrl)
+	//返回
+	c.JSON(http.StatusOK, retData)
 
 }

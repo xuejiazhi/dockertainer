@@ -52,6 +52,7 @@ func Route() {
 	images.Use(MiddleWare)
 	{
 		images.GET("/list", endpoint.ImagesJson)
+		images.GET("/remove", endpoint.RemoveImage)
 	}
 
 	r.Run()

@@ -72,3 +72,19 @@ func getDockerApi[T DockerMsgType](url string, valStruct *T) (msg common.ValueMs
 	}
 	return
 }
+
+func deleteDockerApi(url string) (msg common.ValueMsg) {
+	val := util.HttpDelete(url)
+	msg.Code = http.StatusOK
+	msg.Msg = common.Tips["operate_succ"]
+	//值
+	var tempMap map[string]interface{}
+	json.Unmarshal([]byte(val), &tempMap)
+	msg.Value = tempMap
+
+	if val == "" {
+		msg.Code = http.StatusNoContent
+		msg.Msg = common.Tips["operate_fail"]
+	}
+	return
+}

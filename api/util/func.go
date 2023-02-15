@@ -39,6 +39,16 @@ func HttpGet(url string) string {
 	return body.String()
 }
 
+func HttpDelete(url string) string {
+	cli := goz.NewClient()
+	resp, err := cli.Delete(url)
+	if err != nil {
+		return ""
+	}
+	body, _ := resp.GetBody()
+	return body.String()
+}
+
 func RegexpIp(ip string) bool {
 	ipReg := `^(((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4})`
 	r, _ := regexp.Compile(ipReg)
@@ -47,8 +57,4 @@ func RegexpIp(ip string) bool {
 		return true
 	}
 	return false
-}
-
-func Json2Struct() {
-	
 }

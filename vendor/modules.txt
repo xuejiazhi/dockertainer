@@ -95,7 +95,16 @@ github.com/ugorji/go/codec
 github.com/yoda-of-soda/map2xml
 # golang.org/x/crypto v0.6.0
 ## explicit; go 1.17
+golang.org/x/crypto/blowfish
+golang.org/x/crypto/chacha20
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/curve25519/internal/field
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/internal/alias
+golang.org/x/crypto/internal/poly1305
 golang.org/x/crypto/sha3
+golang.org/x/crypto/ssh
+golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
 # golang.org/x/net v0.7.0
 ## explicit; go 1.17
 golang.org/x/net/html
