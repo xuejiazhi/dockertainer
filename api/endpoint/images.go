@@ -73,3 +73,39 @@ func RemoveImage(c *gin.Context) {
 	c.JSON(http.StatusOK, retData)
 
 }
+
+// InspectImage 查看镜像详细信息
+func InspectImage(c *gin.Context) {
+	//get params
+	nodeName := c.DefaultQuery("node_name", "")
+
+	//校验
+	var nodeInfo databases.TNodePoint
+	if msg, err := judgeNode(nodeName, &nodeInfo); err != nil {
+		c.JSON(http.StatusOK, msg)
+		return
+	}
+
+	//get params
+	imageId := c.DefaultQuery("image_id", "")
+	if imageId == "" {
+		c.JSON(http.StatusOK, common.NormalMsg{
+			Code: http.StatusNoContent,
+			Msg:  common.Tips["id_is_null"],
+		})
+		return
+	}
+
+	//remove url
+	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/json", nodeInfo.NodeUrl, imageId)
+	var imageInspect ImageInspect
+	if retData, err := getDockerApi(restUrl, &imageInspect); err == nil {
+		//返回
+		c.JSON(http.StatusOK, retData)
+	} else {
+		c.JSON(http.StatusOK, common.NormalMsg{
+			Code: http.StatusNoContent,
+			Msg:  common.Tips["get_data_fail"],
+		})
+	}
+}

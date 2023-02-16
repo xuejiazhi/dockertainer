@@ -117,3 +117,75 @@ type ImageList struct {
 	Size        int64    `json:"Size"`
 	VirtualSize int64    `json:"VirtualSize"`
 }
+
+type ImageInspect struct {
+	Architecture string `json:"Architecture"`
+	Author       string `json:"Author"`
+	Comment      string `json:"Comment"`
+	Config       struct {
+		ArgsEscaped  bool        `json:"ArgsEscaped"`
+		AttachStderr bool        `json:"AttachStderr"`
+		AttachStdin  bool        `json:"AttachStdin"`
+		AttachStdout bool        `json:"AttachStdout"`
+		Cmd          interface{} `json:"Cmd"`
+		Domainname   string      `json:"Domainname"`
+		Entrypoint   []string    `json:"Entrypoint"`
+		Env          []string    `json:"Env"`
+		Hostname     string      `json:"Hostname"`
+		Image        string      `json:"Image"`
+		Labels       interface{} `json:"Labels"`
+		OnBuild      interface{} `json:"OnBuild"`
+		OpenStdin    bool        `json:"OpenStdin"`
+		StdinOnce    bool        `json:"StdinOnce"`
+		Tty          bool        `json:"Tty"`
+		User         string      `json:"User"`
+		Volumes      interface{} `json:"Volumes"`
+		WorkingDir   string      `json:"WorkingDir"`
+	} `json:"Config"`
+	Container       string `json:"Container"`
+	ContainerConfig struct {
+		ArgsEscaped  bool        `json:"ArgsEscaped"`
+		AttachStderr bool        `json:"AttachStderr"`
+		AttachStdin  bool        `json:"AttachStdin"`
+		AttachStdout bool        `json:"AttachStdout"`
+		Cmd          []string    `json:"Cmd"`
+		Domainname   string      `json:"Domainname"`
+		Entrypoint   []string    `json:"Entrypoint"`
+		Env          []string    `json:"Env"`
+		Hostname     string      `json:"Hostname"`
+		Image        string      `json:"Image"`
+		Labels       struct{}    `json:"Labels"`
+		OnBuild      interface{} `json:"OnBuild"`
+		OpenStdin    bool        `json:"OpenStdin"`
+		StdinOnce    bool        `json:"StdinOnce"`
+		Tty          bool        `json:"Tty"`
+		User         string      `json:"User"`
+		Volumes      interface{} `json:"Volumes"`
+		WorkingDir   string      `json:"WorkingDir"`
+	} `json:"ContainerConfig"`
+	Created       string `json:"Created"`
+	DockerVersion string `json:"DockerVersion"`
+	GraphDriver   struct {
+		Data struct {
+			LowerDir  string `json:"LowerDir"`
+			MergedDir string `json:"MergedDir"`
+			UpperDir  string `json:"UpperDir"`
+			WorkDir   string `json:"WorkDir"`
+		} `json:"Data"`
+		Name string `json:"Name"`
+	} `json:"GraphDriver"`
+	ID       string `json:"Id"`
+	Metadata struct {
+		LastTagTime string `json:"LastTagTime"`
+	} `json:"Metadata"`
+	Os          string        `json:"Os"`
+	Parent      string        `json:"Parent"`
+	RepoDigests []interface{} `json:"RepoDigests"`
+	RepoTags    []string      `json:"RepoTags"`
+	RootFS      struct {
+		Layers []string `json:"Layers"`
+		Type   string   `json:"Type"`
+	} `json:"RootFS"`
+	Size        int64 `json:"Size"`
+	VirtualSize int64 `json:"VirtualSize"`
+}

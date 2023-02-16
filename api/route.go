@@ -53,6 +53,7 @@ func Route() {
 	{
 		images.GET("/list", endpoint.ImagesJson)
 		images.GET("/remove", endpoint.RemoveImage)
+		images.GET("/inspect", endpoint.InspectImage)
 	}
 
 	r.Run()
