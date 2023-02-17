@@ -46,28 +46,15 @@ func ExportTarFile() {
 
 // RemoveImage 删除镜像包,分为一般删除和强制删除
 func RemoveImage(c *gin.Context) {
-	//get params
-	nodeName := c.DefaultQuery("node_name", "")
-
 	//校验
-	var nodeInfo databases.TNodePoint
-	if msg, err := judgeNode(nodeName, &nodeInfo); err != nil {
-		c.JSON(http.StatusOK, msg)
-		return
-	}
-
-	//get params
-	imageId := c.DefaultQuery("image_id", "")
-	if imageId == "" {
-		c.JSON(http.StatusOK, common.NormalMsg{
-			Code: http.StatusNoContent,
-			Msg:  common.Tips["id_is_null"],
-		})
+	data, err := judgeNodeId(c)
+	if err != nil {
+		c.JSON(http.StatusOK, data.Msg)
 		return
 	}
 
 	//remove url
-	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s", nodeInfo.NodeUrl, imageId)
+	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s", data.NodeInfo.NodeUrl, data.ImageID)
 	retData := deleteDockerApi(restUrl)
 	//返回
 	c.JSON(http.StatusOK, retData)
@@ -76,36 +63,42 @@ func RemoveImage(c *gin.Context) {
 
 // InspectImage 查看镜像详细信息
 func InspectImage(c *gin.Context) {
-	//get params
-	nodeName := c.DefaultQuery("node_name", "")
-
 	//校验
-	var nodeInfo databases.TNodePoint
-	if msg, err := judgeNode(nodeName, &nodeInfo); err != nil {
-		c.JSON(http.StatusOK, msg)
-		return
-	}
-
-	//get params
-	imageId := c.DefaultQuery("image_id", "")
-	if imageId == "" {
-		c.JSON(http.StatusOK, common.NormalMsg{
-			Code: http.StatusNoContent,
-			Msg:  common.Tips["id_is_null"],
-		})
+	data, err := judgeNodeId(c)
+	if err != nil {
+		c.JSON(http.StatusOK, data.Msg)
 		return
 	}
 
 	//remove url
-	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/json", nodeInfo.NodeUrl, imageId)
+	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/json", data.NodeInfo.NodeUrl, data.ImageID)
 	var imageInspect ImageInspect
-	if retData, err := getDockerApi(restUrl, &imageInspect); err == nil {
-		//返回
-		c.JSON(http.StatusOK, retData)
-	} else {
-		c.JSON(http.StatusOK, common.NormalMsg{
-			Code: http.StatusNoContent,
-			Msg:  common.Tips["get_data_fail"],
-		})
+	retData, err := getDockerApi(restUrl, &imageInspect)
+	if err != nil {
+		//todo: print logs
+		fmt.Println("Image History->", err.Error())
 	}
+
+	c.JSON(http.StatusOK, retData)
+}
+
+// HistoryImage 返回images 历史记录
+func HistoryImage(c *gin.Context) {
+	//校验
+	data, err := judgeNodeId(c)
+	if err != nil {
+		c.JSON(http.StatusOK, data.Msg)
+		return
+	}
+
+	//remove url
+	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/history", data.NodeInfo.NodeUrl, data.ImageID)
+	var ImageHistorys []ImageHistory
+	retData, err := getDockerApi(restUrl, &ImageHistorys)
+	if err != nil {
+		//todo: print logs
+		fmt.Println("Image History->", err.Error())
+	}
+	//返回
+	c.JSON(http.StatusOK, retData)
 }

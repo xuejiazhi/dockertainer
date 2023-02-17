@@ -189,3 +189,12 @@ type ImageInspect struct {
 	Size        int64 `json:"Size"`
 	VirtualSize int64 `json:"VirtualSize"`
 }
+
+type ImageHistory struct {
+	Comment   string        `json:"Comment"`
+	Created   int64         `json:"Created"`
+	CreatedBy string        `json:"CreatedBy"`
+	ID        string        `json:"Id"`
+	Size      int64         `json:"Size"`
+	Tags      []interface{} `json:"Tags"`
+}
