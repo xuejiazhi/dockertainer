@@ -3,6 +3,8 @@ package endpoint
 import (
 	"dockertainer/api/common"
 	"dockertainer/api/databases"
+	"dockertainer/api/util"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -22,16 +24,72 @@ func ImagesJson(c *gin.Context) {
 
 	//rest url get body
 	restUrl := fmt.Sprintf("http://%s/v1.39/images/json", nodeInfo.NodeUrl)
-	var imageList []ImageList
-	if retData, err := getDockerApi(restUrl, &imageList); err == nil {
+
+	//过滤器
+	reference := c.DefaultQuery("reference", "")
+	if reference != "" {
+		var imageList []ImageList
+		filters := fmt.Sprintf("*%s*:*", reference)
+		for i := 0; i < 5; i++ {
+			if i > 0 {
+				filters = "*/" + filters
+			}
+			r, _ := json.Marshal(map[string][]string{
+				"reference": {filters},
+			})
+			queryUrl := fmt.Sprintf("%s?filters=%s", restUrl, string(r))
+			fmt.Println("queryUrl->", queryUrl)
+			//获取GET数据
+			var images []ImageList
+			data := util.HttpGet(queryUrl)
+			_ = json.Unmarshal([]byte(data), &images)
+			imageList = append(imageList, images...)
+		}
 		//返回
-		c.JSON(http.StatusOK, retData)
-	} else {
-		c.JSON(http.StatusOK, common.NormalMsg{
-			Code: http.StatusNoContent,
-			Msg:  common.Tips["get_data_fail"],
+		c.JSON(http.StatusOK, common.ValueMsg{
+			Code:  http.StatusOK,
+			Msg:   common.Tips["get_data_succ"],
+			Value: imageList,
 		})
+	} else {
+		//非过滤的情况
+		var imageList []ImageList
+		retData, err := getDockerApi(restUrl, &imageList)
+		if err != nil {
+			//todo: print logs
+			fmt.Println("Image History->", err.Error())
+		}
+		c.JSON(http.StatusOK, retData)
 	}
+}
+
+func getImageFilters(reference string) string {
+	filters := []string{"*" + reference + "*:*"}
+	v := ""
+	for i := 1; i < 5; i++ {
+		v += "/*"
+		filters = append(filters,
+			fmt.Sprintf("*%s%s*:*", v, reference),
+			fmt.Sprintf("*%s*%s", reference, v))
+	}
+	r, _ := json.Marshal(map[string]interface{}{
+		"reference": filters,
+	})
+	return string(r)
+}
+
+// ImagesSearch 镜像查询
+func ImagesSearch(c *gin.Context) {
+	//get params
+	nodeName := c.DefaultQuery("node_name", "")
+
+	//校验
+	var nodeInfo databases.TNodePoint
+	if msg, err := judgeNode(nodeName, &nodeInfo); err != nil {
+		c.JSON(http.StatusOK, msg)
+		return
+	}
+
 }
 
 // ImportFileTar 导入镜像包
