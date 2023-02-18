@@ -30,6 +30,7 @@ func ImagesJson(c *gin.Context) {
 	if reference != "" {
 		var imageList []ImageList
 		filters := fmt.Sprintf("*%s*:*", reference)
+		//因为filters 不支持/,所以采用这笨办法
 		for i := 0; i < 5; i++ {
 			if i > 0 {
 				filters = "*/" + filters
@@ -38,7 +39,6 @@ func ImagesJson(c *gin.Context) {
 				"reference": {filters},
 			})
 			queryUrl := fmt.Sprintf("%s?filters=%s", restUrl, string(r))
-			fmt.Println("queryUrl->", queryUrl)
 			//获取GET数据
 			var images []ImageList
 			data := util.HttpGet(queryUrl)
@@ -63,21 +63,6 @@ func ImagesJson(c *gin.Context) {
 	}
 }
 
-func getImageFilters(reference string) string {
-	filters := []string{"*" + reference + "*:*"}
-	v := ""
-	for i := 1; i < 5; i++ {
-		v += "/*"
-		filters = append(filters,
-			fmt.Sprintf("*%s%s*:*", v, reference),
-			fmt.Sprintf("*%s*%s", reference, v))
-	}
-	r, _ := json.Marshal(map[string]interface{}{
-		"reference": filters,
-	})
-	return string(r)
-}
-
 // ImagesSearch 镜像查询
 func ImagesSearch(c *gin.Context) {
 	//get params
@@ -90,6 +75,41 @@ func ImagesSearch(c *gin.Context) {
 		return
 	}
 
+}
+
+// ImagesTag  给镜像打tag
+func ImagesTag(c *gin.Context) {
+	//校验
+	data, err := judgeNodeId(c)
+	if err != nil {
+		c.JSON(http.StatusOK, data.Msg)
+		return
+	}
+	//获取repo tag信息
+	repo := c.DefaultQuery("repo", "")
+	if repo == "" {
+		c.JSON(http.StatusOK, common.NormalMsg{
+			Code: http.StatusNoContent,
+			Msg:  common.Tips["id_is_null"],
+		})
+	}
+
+	tag := c.DefaultQuery("tag", "latest")
+
+	//remove url
+	restUrl := fmt.Sprintf("http://%s/v1.39/%s/tag", data.NodeInfo.NodeUrl, data.ImageID)
+	var retMap map[string]interface{}
+	retData, err := postDockerApi(restUrl, map[string]interface{}{
+		"repo": repo,
+		"tag":  tag,
+	},
+		&retMap)
+	if err != nil {
+		//todo: print logs
+		fmt.Println("Image Tag->", err.Error())
+	}
+	//返回
+	c.JSON(http.StatusOK, retData)
 }
 
 // ImportFileTar 导入镜像包

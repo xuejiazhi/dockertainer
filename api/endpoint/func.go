@@ -85,6 +85,22 @@ func getDockerApi[T DockerMsgType](url string, valStruct *T) (msg common.ValueMs
 	return
 }
 
+// postDockerApi 操作POST
+func postDockerApi[T any](url string, params map[string]interface{}, valStruct *T) (msg common.ValueMsg, err error) {
+	//获取Get respData
+	data := util.HttpPost(url, params)
+	err = json.Unmarshal([]byte(data), &valStruct)
+	if err == nil {
+		msg.Code = http.StatusOK
+		msg.Msg = common.Tips["operate_succ"]
+		msg.Value = valStruct
+	} else {
+		msg.Code = http.StatusNoContent
+		msg.Msg = common.Tips["operate_fail"]
+	}
+	return
+}
+
 func deleteDockerApi(url string) (msg common.ValueMsg) {
 	val := util.HttpDelete(url)
 	msg.Code = http.StatusOK
