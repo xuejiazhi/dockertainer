@@ -39,12 +39,12 @@ func HttpGet(url string) string {
 	return body.String()
 }
 
-func HttpPost(url string, params map[string]interface{}) string {
+func HttpPost(url string, headers, params map[string]interface{}) (data string, err error) {
 	cli := goz.NewClient()
 	var resp *goz.Response
-	var err error
 	if len(params) > 0 {
 		resp, err = cli.Post(url, goz.Options{
+			Headers:    headers,
 			FormParams: params,
 		})
 	} else {
@@ -52,10 +52,11 @@ func HttpPost(url string, params map[string]interface{}) string {
 	}
 
 	if err != nil {
-		return ""
+		return
 	}
 	body, _ := resp.GetBody()
-	return body.String()
+	data = body.String()
+	return
 }
 
 func HttpDelete(url string) string {

@@ -15,5 +15,7 @@ var (
 		"operate_fail":     "操作失败",
 		"remove_succ":      "删除成功",
 		"remove_fail":      "删除失败",
+		"repo_is_null":     "镜像repo为空",
+		"tag_is_null":      "镜像tag为空",
 	}
 )

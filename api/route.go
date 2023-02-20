@@ -56,7 +56,7 @@ func Route() {
 		images.GET("/inspect", endpoint.InspectImage)
 		images.GET("/history", endpoint.HistoryImage)
 		images.GET("/search", endpoint.ImagesSearch)
-		images.POST("/tag", endpoint.ImagesTag)
+		images.GET("/tag", endpoint.ImagesTag)
 	}
 
 	r.Run()

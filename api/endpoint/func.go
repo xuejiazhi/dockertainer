@@ -86,17 +86,23 @@ func getDockerApi[T DockerMsgType](url string, valStruct *T) (msg common.ValueMs
 }
 
 // postDockerApi 操作POST
-func postDockerApi[T any](url string, params map[string]interface{}, valStruct *T) (msg common.ValueMsg, err error) {
+func postDockerApi[T any](url string, headers, params map[string]interface{}, valStruct *T) (msg common.ValueMsg, err error) {
 	//获取Get respData
-	data := util.HttpPost(url, params)
-	err = json.Unmarshal([]byte(data), &valStruct)
-	if err == nil {
-		msg.Code = http.StatusOK
-		msg.Msg = common.Tips["operate_succ"]
-		msg.Value = valStruct
-	} else {
-		msg.Code = http.StatusNoContent
-		msg.Msg = common.Tips["operate_fail"]
+	if data, err := util.HttpPost(url, headers, params); err == nil {
+		if data != "" {
+			err = json.Unmarshal([]byte(data), &valStruct)
+			if err == nil {
+				msg.Code = http.StatusOK
+				msg.Msg = common.Tips["operate_succ"]
+				msg.Value = valStruct
+			} else {
+				msg.Code = http.StatusNoContent
+				msg.Msg = common.Tips["operate_fail"]
+			}
+		} else {
+			msg.Code = http.StatusOK
+			msg.Msg = common.Tips["operate_succ"]
+		}
 	}
 	return
 }

@@ -90,19 +90,24 @@ func ImagesTag(c *gin.Context) {
 	if repo == "" {
 		c.JSON(http.StatusOK, common.NormalMsg{
 			Code: http.StatusNoContent,
-			Msg:  common.Tips["id_is_null"],
+			Msg:  common.Tips["repo_is_null"],
 		})
+		return
 	}
 
 	tag := c.DefaultQuery("tag", "latest")
 
 	//remove url
-	restUrl := fmt.Sprintf("http://%s/v1.39/%s/tag", data.NodeInfo.NodeUrl, data.ImageID)
+	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/tag", data.NodeInfo.NodeUrl, data.ImageID)
 	var retMap map[string]interface{}
-	retData, err := postDockerApi(restUrl, map[string]interface{}{
-		"repo": repo,
-		"tag":  tag,
-	},
+	retData, err := postDockerApi(restUrl,
+		map[string]interface{}{
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
+		map[string]interface{}{
+			"repo": repo,
+			"tag":  tag,
+		},
 		&retMap)
 	if err != nil {
 		//todo: print logs
