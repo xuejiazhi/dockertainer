@@ -53,7 +53,7 @@ func sshclient(sshHost string, sshPort int) {
 		Timeout:         time.Second, //ssh 连接time out 时间一秒钟, 如果ssh验证错误 会在一秒内返回，尽量短些
 		User:            "root",
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //这个可以, 但是不够安全
-		Auth:            []ssh.AuthMethod{ssh.Password("Bingo@1993")},
+		Auth:            []ssh.AuthMethod{ssh.Password("test123456")},
 		//HostKeyCallback: hostKeyCallBackFunc(h.Host),
 	}
 	addr := fmt.Sprintf("%s:%d", sshHost, sshPort)
