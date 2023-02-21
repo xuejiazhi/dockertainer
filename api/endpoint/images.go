@@ -98,7 +98,7 @@ func ImagesTag(c *gin.Context) {
 	tag := c.DefaultQuery("tag", "latest")
 
 	//remove url
-	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/tag", data.NodeInfo.NodeUrl, data.ImageID)
+	restUrl := fmt.Sprintf("http://%s/%s/images/%s/tag", data.NodeInfo.NodeUrl, data.NodeInfo.Version, data.ImageID)
 	var retMap map[string]interface{}
 	retData, err := postDockerApi(restUrl,
 		map[string]interface{}{
@@ -137,7 +137,7 @@ func RemoveImage(c *gin.Context) {
 	}
 
 	//remove url
-	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s", data.NodeInfo.NodeUrl, data.ImageID)
+	restUrl := fmt.Sprintf("http://%s/%s/images/%s", data.NodeInfo.NodeUrl, data.NodeInfo.Version, data.ImageID)
 	retData := deleteDockerApi(restUrl)
 	//返回
 	c.JSON(http.StatusOK, retData)
@@ -154,7 +154,7 @@ func InspectImage(c *gin.Context) {
 	}
 
 	//remove url
-	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/json", data.NodeInfo.NodeUrl, data.ImageID)
+	restUrl := fmt.Sprintf("http://%s/%s/images/%s/json", data.NodeInfo.NodeUrl, data.NodeInfo.Version, data.ImageID)
 	var imageInspect ImageInspect
 	retData, err := getDockerApi(restUrl, &imageInspect)
 	if err != nil {
@@ -175,7 +175,7 @@ func HistoryImage(c *gin.Context) {
 	}
 
 	//remove url
-	restUrl := fmt.Sprintf("http://%s/v1.39/images/%s/history", data.NodeInfo.NodeUrl, data.ImageID)
+	restUrl := fmt.Sprintf("http://%s/%s/images/%s/history", data.NodeInfo.NodeUrl, data.NodeInfo.Version, data.ImageID)
 	var ImageHistorys []ImageHistory
 	retData, err := getDockerApi(restUrl, &ImageHistorys)
 	if err != nil {
