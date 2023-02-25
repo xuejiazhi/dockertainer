@@ -1,0 +1,5 @@
+/front/node_modules
+/front/package-lock.json
+/front/dist
+/front/mirror
+/front/work.md
