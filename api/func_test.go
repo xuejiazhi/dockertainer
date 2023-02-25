@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net"
 	"regexp"
@@ -31,4 +32,20 @@ func Test_regIP(t *testing.T) {
 	} else {
 		fmt.Printf("%s is not a legal ipv4 address\n", str)
 	}
+}
+
+func Test_c(t *testing.T) {
+	filters := []string{"*centos*"}
+	v := ""
+	for i := 0; i <= 5; i++ {
+		v += "/*"
+		filters = append(filters,
+			fmt.Sprintf("*%s%s*", v, "centos"),
+			fmt.Sprintf("*%s*%s", "centos", v))
+	}
+	c := map[string]interface{}{
+		"reference": filters,
+	}
+	d, _ := json.Marshal(c)
+	fmt.Println(string(d))
 }

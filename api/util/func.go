@@ -39,6 +39,26 @@ func HttpGet(url string) string {
 	return body.String()
 }
 
+func HttpPost(url string, headers, params map[string]interface{}) (data string, err error) {
+	cli := goz.NewClient()
+	var resp *goz.Response
+	if len(params) > 0 {
+		resp, err = cli.Post(url, goz.Options{
+			Headers:    headers,
+			FormParams: params,
+		})
+	} else {
+		resp, err = cli.Post(url)
+	}
+
+	if err != nil {
+		return
+	}
+	body, _ := resp.GetBody()
+	data = body.String()
+	return
+}
+
 func HttpDelete(url string) string {
 	cli := goz.NewClient()
 	resp, err := cli.Delete(url)
